@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Movie &amp; Show Success Predictor – Dashboard</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mut:#667085;--line:#e4e7ee;--a:#4f46e5;--b:#f59e0b;--g:#10b981;--r:#ef4444;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1117;--card:#181b25;--tx:#eceef4;--mut:#9aa3b5;--line:#2a2f3d;--a:#818cf8;--b:#fbbf24;--g:#34d399;--r:#f87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1117;--card:#181b25;--tx:#eceef4;--mut:#9aa3b5;--line:#2a2f3d;--a:#818cf8;--b:#fbbf24;--g:#34d399;--r:#f87171;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 2px}.sub{color:var(--mut);margin:0 0 16px;font-size:13px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tabs button,.pill{border:1px solid var(--line);background:var(--card);color:var(--tx);padding:7px 14px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer}
+.tabs button.on,.pill.on{background:var(--a);border-color:var(--a);color:var(--on,#fff)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h3{margin:0 0 10px;font-size:14px}.kpi{font-size:28px;font-weight:700;line-height:1.1}.kl{color:var(--mut);font-size:12px;margin-top:4px}
+.two{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:12px}
+.row{display:grid;grid-template-columns:110px 1fr 64px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+.track{background:var(--line);border-radius:6px;height:12px;overflow:hidden}.fill{height:100%;border-radius:6px;background:var(--a)}
+.num{text-align:right;color:var(--mut);font-variant-numeric:tabular-nums}
+.hist{display:flex;align-items:flex-end;gap:3px;height:150px}.hist div{flex:1;background:var(--a);border-radius:3px 3px 0 0;min-height:2px}
+.hist div.g{background:var(--g)}.ax{display:flex;justify-content:space-between;color:var(--mut);font-size:11px;margin-top:4px}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mut);font-weight:600}
+td.best{color:var(--g);font-weight:700}.ctl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.note{font-size:12px;color:var(--mut);margin-top:10px}.warn{border-left:4px solid var(--b);padding:10px 12px;background:var(--card);border-radius:8px;font-size:13px;margin-top:12px}
+.leg{display:flex;gap:12px;font-size:12px;color:var(--mut);margin-bottom:8px}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:10px 12px}.sp{flex:1}
+.sw{display:flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--bg);color:var(--tx);border-radius:999px;padding:5px 10px 5px 6px;font:inherit;font-size:12px;cursor:pointer}
+.sw i{width:12px;height:12px;border-radius:50%;display:inline-block}.sw span{margin-left:3px}.sw.on{outline:2px solid var(--a)}
+.row[data-pick]{cursor:pointer;border-radius:8px}.row[data-pick]:hover,.row.sel{background:var(--bg)}
+input[type=range]{width:100%;accent-color:var(--a);margin:4px 0 10px}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+:root[data-skin="cinema"]{--bg:#14100e;--card:#1f1815;--tx:#f3ece3;--mut:#b3a597;--line:#3a2f29;color-scheme:dark}
+[data-skin="cinema"] .card{border-radius:8px;border-color:transparent}
+[data-skin="cinema"] .tabs button{border:0;background:transparent;border-radius:0;border-bottom:3px solid transparent;color:var(--mut);padding:8px 4px;margin-right:14px;font-weight:600}
+[data-skin="cinema"] .tabs button.on{background:transparent;color:#fff;border-bottom-color:var(--a)}
+.hero{border-radius:12px;padding:28px;background:linear-gradient(100deg,color-mix(in srgb,var(--a) 75%,#000),var(--bg) 80%);margin-bottom:12px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;color:#fff}
+.hero h2{margin:0;font-size:26px}.hero p{margin:6px 0 16px;color:#dbe7f0;max-width:520px}.big{font-size:80px;font-weight:800;line-height:1}
+.btn{background:#fff;color:#0f171e;border:0;border-radius:6px;padding:10px 20px;font:inherit;font-weight:700;cursor:pointer}
+.rail{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.tile{flex:0 0 132px;height:168px;border-radius:8px;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(160deg,color-mix(in srgb,var(--a) 70%,#000),var(--card));color:#fff;cursor:pointer}
+.tile b{font-size:26px}.tile span{font-size:12px;color:#dbe7f0}.tile.sel{outline:2px solid #fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎬 Movie &amp; Show Success Predictor</h1>
+<p class="sub">Predicting whether a title is “good” (IMDb score ≥ 7) · Amazon titles &amp; credits dataset</p>
+<div class="tabs" id="tabs"></div>
+<div id="view"></div>
+<p class="note">Model numbers come from the grouped train/test split (no title in both sets). Insight charts use all 8,847 titles that have an IMDb score; the models use the 8,156 of them that also have credits.</p>
+</div>
+<script>
+const M={all:{LR:{Accuracy:.8297,Precision:.5842,Recall:.8113,F1:.6793,"ROC-AUC":.8960},XGB:{Accuracy:.8741,Precision:.6961,Recall:.7694,F1:.7309,"ROC-AUC":.9274}},
+pre:{LR:{Accuracy:.7366,F1:.5326,"ROC-AUC":.7848},XGB:{Accuracy:.7584,F1:.5654,"ROC-AUC":.8078}}};
+const CV={LR:[.8848,.0137],XGB:[.9401,.0065]};
+const FI={all:[["tmdb_score",.135],["country: IN",.0575],["genre: documentation",.0512],["seasons",.0439],["country: IS",.035],["country: US",.0318]],
+pre:[["seasons",.1015],["genre: documentation",.0977],["genre: horror",.0477],["genre: comedy",.0287],["country: RU",.0266],["genre: western",.0223],["country: GB",.0219],["runtime",.0209],["country: US",.0205],["country: HK",.0202]]};
+const D={type:[["Movies",7681,.19],["Shows",1166,.64]],
+hist:[[1,4],[1.5,19],[2,51],[2.5,116],[3,218],[3.5,285],[4,474],[4.5,687],[5,1033],[5.5,1253],[6,1361],[6.5,1144],[7,1037],[7.5,625],[8,367],[8.5,140],[9,30],[9.5,3]],
+genre:[["drama",2392,.27],["comedy",1451,.258],["thriller",1017,.134],["documentation",648,.63],["horror",557,.022],["action",491,.2],["romance",475,.173],["western",405,.049],["scifi",303,.257],["crime",284,.229]],
+country:[["US",4696,.185],["IN",947,.369],["GB",703,.374],["Unknown",491,.33],["CA",409,.208],["FR",161,.317],["JP",156,.481],["AU",155,.342]],
+decade:[["≤1960s",1387,.118],["1970s",343,.233],["1980s",378,.206],["1990s",492,.262],["2000s",1051,.279],["2010s",3934,.286],["2020s",1262,.263]]};
+const st={tab:"Overview",set:"pre",metric:"ROC-AUC",pal:"Cinema",theme:"dark",sort:"size",sel:null,cut:7};
+const pc=v=>(v*100).toFixed(1)+"%",f4=v=>v.toFixed(3);
+const bars=(rows,max,fmt,color)=>rows.map(([l,v,s])=>`<div class="row"><span>${l}</span><div class="track" title="${l}: ${fmt(v)}"><div class="fill" style="width:${Math.max(1,v/max*100)}%;${color?`background:${color}`:''}"></div></div><span class="num">${fmt(v)}</span></div>`).join("");
+function overview(){return `<div class="hero"><div><h2>Can we predict a hit before release?</h2><p>XGBoost reaches an honest ROC-AUC of 0.81 using only pre-release information, across 8,156 Amazon titles.</p><button class="btn" data-t="Models">▶ Explore the models</button></div><div class="big">0.81</div></div><div class="grid">
+<div class="card"><div class="kpi">8,156</div><div class="kl">unique titles modelled</div></div>
+<div class="card"><div class="kpi">118,127</div><div class="kl">rows after merge (≈14.5 per title)</div></div>
+<div class="card"><div class="kpi">23%</div><div class="kl">titles rated “good” (imbalanced)</div></div>
+<div class="card"><div class="kpi" style="color:var(--g)">0.81</div><div class="kl">honest ROC-AUC (XGBoost, pre-release features)</div></div></div>
+<div class="two"><div class="card"><h3>The leakage effect (XGBoost ROC-AUC)</h3>
+${bars([["All features",.9274,""],["Pre-release only",.8078,""]],1,f4)}
+<div class="warn">Adding <b>tmdb_score</b>, <b>imdb_votes</b> and <b>tmdb_popularity</b> lifts AUC by 0.12, but those are only known after release. The 0.81 score is the honest one.</div></div>
+<div class="card"><h3>Grouped 5-fold CV ROC-AUC (all features)</h3>
+${bars([["XGBoost",CV.XGB[0],""],["Logistic Reg.",CV.LR[0],""]],1,f4)}
+<p class="note">± std: XGBoost ${CV.XGB[1]}, Logistic Regression ${CV.LR[1]} → both stable across folds.</p></div></div>`}
+function models(){const s=M[st.set],ms=Object.keys(s.LR);
+const best=m=>s.XGB[m]>=s.LR[m]?"XGB":"LR";
+return `<div class="ctl"><button class="pill ${st.set=='pre'?'on':''}" data-s="pre">Pre-release features</button><button class="pill ${st.set=='all'?'on':''}" data-s="all">All features (leaky)</button></div>
+<div class="two"><div class="card"><h3>Test-set metrics</h3><div class="scroll"><table><tr><th>Metric</th><th>Logistic Reg.</th><th>XGBoost</th></tr>
+${ms.map(m=>`<tr><td>${m}</td><td class="${best(m)=='LR'?'best':''}">${f4(s.LR[m])}</td><td class="${best(m)=='XGB'?'best':''}">${f4(s.XGB[m])}</td></tr>`).join("")}</table></div>
+<p class="note">${st.set=='pre'?'Precision and recall were not recorded for this run.':'Green = better model for that metric.'}</p></div>
+<div class="card"><h3>Top features (XGBoost)</h3>${bars(FI[st.set].map(([l,v])=>[l,v]),FI[st.set][0][1],v=>v.toFixed(3),"var(--b)")}</div></div>
+<div class="card" style="margin-top:12px"><h3>Compare models on one metric</h3><div class="ctl">${Object.keys(M.pre.LR).map(m=>`<button class="pill ${st.metric==m?'on':''}" data-m="${m}">${m}</button>`).join("")}</div>
+${bars([["LR · all",M.all.LR[st.metric],""],["XGB · all",M.all.XGB[st.metric],""],["LR · pre-release",M.pre.LR[st.metric],"var(--b)"],["XGB · pre-release",M.pre.XGB[st.metric],"var(--b)"]],1,f4)}</div>`}
+const OV=24.9,TOT=8847;
+const PAL={Cinema:["#b42318","#7a6a5b","#b45309","#e5484d","#c9b8a6","#e8b04b"]};
+const isDark=()=>true;
+const lum=h=>{const n=parseInt(h.slice(1),16),c=[n>>16,(n>>8)&255,n&255].map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+function applyTheme(){const r=document.documentElement;if(isDark())r.setAttribute("data-skin","cinema");else r.removeAttribute("data-skin");r.setAttribute("data-theme","dark");
+const p=PAL[st.pal],o=isDark()?3:0;["--a","--b","--g"].forEach((v,i)=>r.style.setProperty(v,p[i+o]));r.style.setProperty("--on",lum(p[o])>.18?"#111":"#fff");
+try{localStorage.setItem("dash",JSON.stringify([st.pal,st.theme]))}catch(e){}}
+const srt=a=>[...a].sort((x,y)=>st.sort=="good"?y[2]-x[2]:y[1]-x[1]);
+const pb=(g,rows,max)=>rows.map(([l,n,r])=>`<div class="row ${st.sel==g+"|"+l?'sel':''}" data-pick="${g}|${l}" title="${l}: ${n.toLocaleString()} titles, ${pc(r)} good"><span>${l}</span><div class="track"><div class="fill" style="width:${Math.max(1,r/max*100)}%;background:var(--g)"></div></div><span class="num">${pc(r)}</span></div>`).join("");
+function detail(){if(!st.sel)return `<div class="card"><h3>👆 Click any bar below</h3><p class="note">Pick a type, genre, country or decade to compare its “good” share with the overall ${OV}%.</p></div>`;
+const [g,l]=st.sel.split("|"),row=D[g].find(x=>x[0]==l),d=(row[2]*100-OV).toFixed(1);
+return `<div class="card"><h3>${l}</h3><div class="kpi">${pc(row[2])}</div><div class="kl">“good” share · ${row[1].toLocaleString()} titles (${(row[1]/TOT*100).toFixed(1)}% of all)</div><div class="warn">${d>=0?"+":""}${d} points vs the overall ${OV}% → ${d>=0?"above":"below"} average.</div></div>`}
+function drawHist(){const mx=Math.max(...D.hist.map(h=>h[1])),ab=D.hist.filter(h=>h[0]>=st.cut).reduce((s,h)=>s+h[1],0);
+document.getElementById("hist").innerHTML=D.hist.map(([b,n])=>`<div class="${b>=st.cut?'g':''}" style="height:${n/mx*100}%" title="${b}–${b+.5}: ${n} titles"></div>`).join("");
+document.getElementById("cut").innerHTML=`<b>Cut-off ${st.cut}:</b> ${(ab/TOT*100).toFixed(1)}% of titles (${ab.toLocaleString()}) count as “good”`}
+function insights(){return `<div class="ctl"><span class="kl" style="align-self:center">Sort bars by</span><button class="pill ${st.sort=='size'?'on':''}" data-sort="size">Number of titles</button><button class="pill ${st.sort=='good'?'on':''}" data-sort="good">Good share</button></div>
+<div class="card" style="margin-bottom:12px"><h3>Genres at a glance (click a tile)</h3><div class="rail">${srt(D.genre).map(([l,n,r])=>`<div class="tile ${st.sel=="genre|"+l?'sel':''}" data-pick="genre|${l}"><b>${pc(r)}</b><span>${l}<br>${n.toLocaleString()} titles</span></div>`).join("")}</div></div>
+<div class="two">${detail()}<div class="card"><h3>Score cut-off: what counts as “good”?</h3><input type="range" id="rng" min="5" max="9" step="0.5" value="${st.cut}"><div class="leg"><span><i style="background:var(--a)"></i>below cut-off</span><span><i style="background:var(--g)"></i>cut-off and above</span></div><div class="hist" id="hist"></div><div class="ax"><span>1</span><span>5</span><span>10</span></div><p class="kl" id="cut"></p><p class="note">This project uses a cut-off of 7.</p></div>
+<div class="card"><h3>“Good” share by type</h3>${pb("type",D.type,1)}<p class="note">Shows rate far higher than movies, so <b>seasons</b> is the top pre-release feature.</p></div>
+<div class="card"><h3>“Good” share by genre</h3>${pb("genre",srt(D.genre),.7)}</div>
+<div class="card"><h3>“Good” share by country</h3>${pb("country",srt(D.country),.7)}</div>
+<div class="card"><h3>“Good” share by decade</h3>${pb("decade",D.decade,.7)}</div></div>`}
+function render(){document.getElementById("tabs").innerHTML=["Overview","Models","Data insights"].map(t=>`<button class="${st.tab==t?'on':''}" data-t="${t}">${t}</button>`).join("");
+document.getElementById("view").innerHTML=st.tab=="Overview"?overview():st.tab=="Models"?models():insights();if(st.tab=="Data insights")drawHist()}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-t],[data-s],[data-m],[data-p],[data-th],[data-sort],[data-pick]");if(!t)return;const d=t.dataset;
+if(d.t)st.tab=d.t;else if(d.s)st.set=d.s;else if(d.m)st.metric=d.m;else if(d.p){st.pal=d.p;applyTheme()}else if(d.th){st.theme=d.th;applyTheme()}else if(d.sort)st.sort=d.sort;else if(d.pick)st.sel=st.sel==d.pick?null:d.pick;render()});
+document.addEventListener("input",e=>{if(e.target.id=="rng"){st.cut=+e.target.value;drawHist()}});
+try{const s=JSON.parse(localStorage.getItem("dash")||"null");if(s&&PAL[s[0]]){st.pal=s[0];st.theme=s[1]}}catch(e){}
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{applyTheme();render()});
+applyTheme();render();
+</script>
+</body>
+</html>
